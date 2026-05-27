@@ -41,7 +41,7 @@ docker-compose*
 # Tests (not needed in production image)
 src/test/
 
-# Maven
-.mvn/
-mvnw
-mvnw.cmd
+# Maven wrapper - needed for Docker build
+# .mvn/
+# mvnw
+# mvnw.cmd
