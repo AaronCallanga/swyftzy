@@ -35,28 +35,9 @@ public class FlightService {
      * @return a page of matching flights
      */
     public Page<FlightResponse> searchFlights(
-            String origin,
-            List<String> destinations,
-            LocalDate departureDate,
+            FlightFilter filter,
             Pageable pageable
                                              ) {
-
-        FlightFilter.FlightFilterBuilder builder = FlightFilter.builder();
-
-        if (origin != null && !origin.isBlank()) {
-            builder.origin(origin);
-        }
-
-        if (destinations != null && !destinations.isEmpty()) {
-            builder.destinations(destinations);
-        }
-
-        if (departureDate != null) {
-            builder.startOfDay(departureDate.atStartOfDay());
-            builder.endOfDay(departureDate.atTime(LocalTime.MAX));
-        }
-
-        FlightFilter filter = builder.build();
 
         Page<Flight> flights = flightRepository.findAll(
                 FlightSpecification.withFilters(filter),

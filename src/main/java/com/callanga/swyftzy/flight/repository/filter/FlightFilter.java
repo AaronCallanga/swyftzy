@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import java.util.List;
 public class FlightFilter {
     private String origin;
     private List<String> destinations;
-    private LocalDateTime startOfDay;
-    private LocalDateTime endOfDay;
+    private LocalDate departureDate;
     private FlightStatus status;
 }
