@@ -1,0 +1,6 @@
+1. possibly implement a state machine for flight status
+    Ex:
+        SCHEDULED → BOARDING → DEPARTED → ARRIVED
+        SCHEDULED → DELAYED → SCHEDULED
+        SCHEDULED → CANCELLED
+        BOARDING → CANCELLED (rare but possible)
