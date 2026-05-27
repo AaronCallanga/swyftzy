@@ -6,6 +6,7 @@ import com.callanga.swyftzy.seat.enums.SeatStatus;
 import com.callanga.swyftzy.shared.exception.InvalidSeatStateException;
 import com.callanga.swyftzy.shared.exception.SeatAlreadyBookedException;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 public class Seat {
 
     @Id

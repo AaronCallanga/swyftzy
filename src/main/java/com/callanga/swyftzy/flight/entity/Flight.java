@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
