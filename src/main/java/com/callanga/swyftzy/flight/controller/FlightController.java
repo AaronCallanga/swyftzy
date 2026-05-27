@@ -1,5 +1,6 @@
 package com.callanga.swyftzy.flight.controller;
 
+import com.callanga.swyftzy.flight.dto.FlightDetailResponse;
 import com.callanga.swyftzy.flight.dto.FlightResponse;
 import com.callanga.swyftzy.flight.repository.filter.FlightFilter;
 import com.callanga.swyftzy.flight.service.FlightService;
@@ -49,9 +50,9 @@ public class FlightController {
             summary = "Get flight details",
             description = "Retrieve detailed information about a specific flight including schedule and aircraft."
     )
-    public ResponseEntity<FlightResponse> getFlight(@PathVariable UUID id) {
+    public ResponseEntity<FlightDetailResponse> getFlight(@PathVariable UUID id) {
 
-        return flightService.findById(id)
+        return flightService.findDetailedById(id)
                             .map(ResponseEntity::ok)
                             .orElse(ResponseEntity.notFound().build());
     }

@@ -1,5 +1,6 @@
 package com.callanga.swyftzy.flight.service;
 
+import com.callanga.swyftzy.flight.dto.FlightDetailResponse;
 import com.callanga.swyftzy.flight.dto.FlightResponse;
 import com.callanga.swyftzy.flight.entity.Flight;
 import com.callanga.swyftzy.flight.enums.FlightStatus;
@@ -7,6 +8,8 @@ import com.callanga.swyftzy.flight.mapper.FlightMapper;
 import com.callanga.swyftzy.flight.repository.FlightRepository;
 import com.callanga.swyftzy.flight.repository.filter.FlightFilter;
 import com.callanga.swyftzy.flight.repository.specification.FlightSpecification;
+import com.callanga.swyftzy.seat.dto.SeatAvailabilityResponse;
+import com.callanga.swyftzy.seat.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ import java.util.UUID;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final SeatService seatService;
     private final FlightMapper flightMapper;
 
     /**
@@ -55,8 +59,25 @@ public class FlightService {
      * @param id the flight UUID
      * @return an Optional containing the flight response if found
      */
-    public Optional<FlightResponse> findById(UUID id) {
+    public Optional<FlightDetailResponse> findDetailedById(UUID id) {
+
         return flightRepository.findById(id)
-                               .map(flightMapper::toResponse);
+                               .map(flight -> {
+
+                                   List<SeatAvailabilityResponse> availability =
+                                           seatService.getAvailability(flight.getId());
+
+                                   return new FlightDetailResponse(
+                                           flight.getId(),
+                                           flight.getFlightNumber(),
+                                           flight.getOrigin(),
+                                           flight.getDestination(),
+                                           flight.getDepartureTime(),
+                                           flight.getArrivalTime(),
+                                           flight.getAircraftType(),
+                                           flight.getStatus(),
+                                           availability
+                                   );
+                               });
     }
 }

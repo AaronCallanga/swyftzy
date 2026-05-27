@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,8 +32,8 @@ public class SeatService {
      * Supports pagination and sorting by seat number.
      *
      * @param flightId the flight UUID
-     * @param cabin optional cabin class filter
-     * @param status optional status filter
+     * @param cabin    optional cabin class filter
+     * @param status   optional status filter
      * @param pageable pagination parameters
      * @return a page of seats
      */
@@ -49,35 +50,49 @@ public class SeatService {
      * Gets the availability summary for a flight (total and available seats per cabin).
      *
      * @param flightId the flight UUID
-     * @param cabin    the cabin class
      * @return a SeatAvailabilityResponse with counts
      */
-    public SeatAvailabilityResponse getAvailability(UUID flightId, CabinClass cabin) {
-        List<SeatStatusCount> result = seatRepository.countSeatsByStatus(flightId, cabin);
+    public List<SeatAvailabilityResponse> getAvailability(UUID flightId) {
 
-        long total = result.stream()
-                           .mapToLong(SeatStatusCount::getCount)
-                           .sum();
+        List<SeatAvailabilityResponse> availability = new ArrayList<>();
 
-        long available = result.stream()
-                               .filter(r -> r.getStatus() == SeatStatus.AVAILABLE)
+        for (CabinClass cabin : CabinClass.values()) {
+
+            List<SeatStatusCount> result =
+                    seatRepository.countSeatsByStatus(flightId, cabin);
+
+            long total = result.stream()
                                .mapToLong(SeatStatusCount::getCount)
-                               .findFirst()
-                               .orElse(0);
+                               .sum();
 
-        return new SeatAvailabilityResponse(cabin, total, available);
+            long available = result.stream()
+                                   .filter(r -> r.getStatus() == SeatStatus.AVAILABLE)
+                                   .mapToLong(SeatStatusCount::getCount)
+                                   .findFirst()
+                                   .orElse(0);
+
+            availability.add(
+                    new SeatAvailabilityResponse(
+                            cabin,
+                            total,
+                            available
+                    )
+                            );
+        }
+
+        return availability;
     }
 
     /**
      * Finds details of a specific seat
      *
-     * @param flightId the flight UUID
+     * @param flightId   the flight UUID
      * @param seatNumber the seatNumber identifier
      * @return an Optional containing the flight response if found
      */
     public Optional<SeatResponse> findById(UUID flightId,
                                            String seatNumber) {
         return seatRepository.findByFlightIdAndSeatNumber(flightId, seatNumber)
-                               .map(seatMapper::toResponse);
+                             .map(seatMapper::toResponse);
     }
 }

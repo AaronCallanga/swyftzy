@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,11 +45,10 @@ public class SeatController {
     @GetMapping("/availability")
     @Operation(
             summary = "Get seat availability",
-            description = "Get the total and available seat counts for a specific flight and cabin."
+            description = "Get the total and available seat counts for a specific flight."
     )
-    public ResponseEntity<SeatAvailabilityResponse> getAvailability(@PathVariable UUID flightId,
-                                                                    @RequestParam CabinClass cabin) {
-        SeatAvailabilityResponse availability = seatService.getAvailability(flightId, cabin);
+    public ResponseEntity<List<SeatAvailabilityResponse>> getAvailability(@PathVariable UUID flightId) {
+        List<SeatAvailabilityResponse> availability = seatService.getAvailability(flightId);
         return ResponseEntity.ok(availability);
     }
 }
