@@ -53,6 +53,18 @@ public class BookingController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping
+    @Operation(
+            summary = "List all bookings",
+            description = "Retrieve all bookings with pagination support."
+    )
+    public ResponseEntity<Page<BookingResponse>> getAllBookings(
+            @PageableDefault(size = 20, sort = "bookedAt,desc") Pageable pageable) {
+
+        Page<BookingResponse> bookings = bookingService.getAllBookings(pageable);
+        return ResponseEntity.ok(bookings);
+    }
+
     @GetMapping("/flight/{flightId}")
     @Operation(
             summary = "List bookings by flight",
@@ -76,6 +88,19 @@ public class BookingController {
             @PathVariable UUID seatId) {
 
         return bookingService.getBookingByFlightAndSeat(flightId, seatId)
+                             .map(ResponseEntity::ok)
+                             .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/reference/{bookingReference}")
+    @Operation(
+            summary = "Get booking by reference",
+            description = "Retrieve a booking by its unique reference number."
+    )
+    public ResponseEntity<BookingResponse> getBookingByReference(
+            @PathVariable String bookingReference) {
+
+        return bookingService.getBookingByReference(bookingReference)
                              .map(ResponseEntity::ok)
                              .orElse(ResponseEntity.notFound().build());
     }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -43,6 +44,7 @@ public class BookingService {
      * @throws SeatNotFoundException      if the seat does not exist on the flight
      * @throws SeatAlreadyBookedException if the seat is already booked
      */
+    @Transactional
     public BookingResponse bookSeat(BookingRequest bookingRequest) {
         Flight flight = flightService.getFlightById(bookingRequest.flightId());
         Seat seat = seatService.getSeatByFlightIdAndSeatNumberWithLock(
@@ -66,6 +68,7 @@ public class BookingService {
         return bookingMapper.toResponse(savedBooking);
     }
 
+    @Transactional
     public BookingCancellationResponse cancelBooking(String bookingReference) {
         Booking booking = bookingRepository.findByBookingReference(bookingReference)
                                            .orElseThrow(() -> new BookingNotFoundException(bookingReference));
@@ -80,6 +83,11 @@ public class BookingService {
         return bookingMapper.toCancellationResponse(booking);
     }
 
+    public Page<BookingResponse> getAllBookings(Pageable pageable) {
+        return bookingRepository.findAll(pageable)
+                                .map(bookingMapper::toResponse);
+    }
+
     public Page<BookingResponse> getBookingsByFlight(UUID flightId, Pageable pageable) {
         return bookingRepository.findByFlightId(flightId, pageable)
                                 .map(bookingMapper::toResponse);
@@ -87,6 +95,11 @@ public class BookingService {
 
     public Optional<BookingResponse> getBookingByFlightAndSeat(UUID flightId, UUID seatId) {
         return bookingRepository.findByFlightIdAndSeatId(flightId, seatId)
+                                .map(bookingMapper::toResponse);
+    }
+
+    public Optional<BookingResponse> getBookingByReference(String bookingReference) {
+        return bookingRepository.findByBookingReference(bookingReference)
                                 .map(bookingMapper::toResponse);
     }
 }
