@@ -9,17 +9,21 @@ import com.callanga.swyftzy.booking.mapper.BookingMapper;
 import com.callanga.swyftzy.booking.repository.BookingRepository;
 import com.callanga.swyftzy.booking.util.BookingReferenceGenerator;
 import com.callanga.swyftzy.flight.entity.Flight;
-import com.callanga.swyftzy.flight.repository.FlightRepository;
 import com.callanga.swyftzy.flight.service.FlightService;
 import com.callanga.swyftzy.seat.entity.Seat;
 import com.callanga.swyftzy.seat.service.SeatService;
 import com.callanga.swyftzy.shared.exception.BookingNotFoundException;
 import com.callanga.swyftzy.shared.exception.FlightNotFoundException;
+import com.callanga.swyftzy.shared.exception.SeatAlreadyBookedException;
+import com.callanga.swyftzy.shared.exception.SeatNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +34,15 @@ public class BookingService {
     private final SeatService seatService;
     private final FlightService flightService;
 
+    /**
+     * Reserves a seat on a flight using pessimistic locking to prevent double-booking.
+     *
+     * @param bookingRequest the booking request containing flight ID, seat number, and passenger details
+     * @return the booking confirmation response
+     * @throws FlightNotFoundException    if the flight does not exist
+     * @throws SeatNotFoundException      if the seat does not exist on the flight
+     * @throws SeatAlreadyBookedException if the seat is already booked
+     */
     public BookingResponse bookSeat(BookingRequest bookingRequest) {
         Flight flight = flightService.getFlightById(bookingRequest.flightId());
         Seat seat = seatService.getSeatByFlightIdAndSeatNumberWithLock(
@@ -44,6 +57,8 @@ public class BookingService {
                                  .seat(seat)
                                  .passengerName(bookingRequest.passengerName())
                                  .passengerEmail(bookingRequest.passengerEmail())
+                                 .status(BookingStatus.CONFIRMED)
+                                 .bookedAt(LocalDateTime.now())
                                  .build();
 
         Booking savedBooking = bookingRepository.save(booking);
@@ -63,5 +78,15 @@ public class BookingService {
         booking.getSeat().cancel();
 
         return bookingMapper.toCancellationResponse(booking);
+    }
+
+    public Page<BookingResponse> getBookingsByFlight(UUID flightId, Pageable pageable) {
+        return bookingRepository.findByFlightId(flightId, pageable)
+                                .map(bookingMapper::toResponse);
+    }
+
+    public Optional<BookingResponse> getBookingByFlightAndSeat(UUID flightId, UUID seatId) {
+        return bookingRepository.findByFlightIdAndSeatId(flightId, seatId)
+                                .map(bookingMapper::toResponse);
     }
 }

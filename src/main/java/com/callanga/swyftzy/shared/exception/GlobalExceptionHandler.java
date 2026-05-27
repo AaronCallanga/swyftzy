@@ -48,6 +48,15 @@ public class GlobalExceptionHandler {
                                  );
     }
 
+    @ExceptionHandler(FlightNotFoundException.class)
+    public ProblemDetail handleFlightNotFound(FlightNotFoundException ex, HttpServletRequest request) {
+        log.warn("Seat not found: {}", ex.getMessage());
+        return buildProblemDetail(
+                HttpStatus.NOT_FOUND, "Flight Not Found",
+                ex.getMessage(), "/flight-not-found", request
+                                 );
+    }
+
     @ExceptionHandler(BookingNotFoundException.class)
     public ProblemDetail handleBookingNotFound(BookingNotFoundException ex, HttpServletRequest request) {
         log.warn("Booking not found: {}", ex.getMessage());
