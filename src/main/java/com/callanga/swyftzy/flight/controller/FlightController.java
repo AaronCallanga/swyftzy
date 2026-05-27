@@ -14,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,6 +44,18 @@ public class FlightController {
 
         Page<FlightResponse> flights = flightService.searchFlights(flightFilter, pageable);
         return ResponseEntity.ok(flights);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get flight details",
+            description = "Retrieve detailed information about a specific flight including schedule and aircraft."
+    )
+    public ResponseEntity<FlightResponse> getFlight(@PathVariable UUID id) {
+
+        return flightService.findById(id)
+                            .map(ResponseEntity::ok)
+                            .orElse(ResponseEntity.notFound().build());
     }
 
 }

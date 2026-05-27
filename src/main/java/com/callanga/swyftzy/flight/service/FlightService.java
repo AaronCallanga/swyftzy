@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +47,16 @@ public class FlightService {
                                                        );
 
         return flights.map(flightMapper::toResponse);
+    }
+
+    /**
+     * Finds details of a specific flight
+     *
+     * @param id the flight UUID
+     * @return an Optional containing the flight response if found
+     */
+    public Optional<FlightResponse> findById(UUID id) {
+        return flightRepository.findById(id)
+                               .map(flightMapper::toResponse);
     }
 }
