@@ -38,9 +38,7 @@ public class FlightController {
     )
     public ResponseEntity<Page<FlightResponse>> searchFlights(
             @ParameterObject @ModelAttribute FlightFilter flightFilter,
-
-            @PageableDefault(size = 10)
-            Pageable pageable) {
+            @PageableDefault(size = 10, sort = "flightNumber") Pageable pageable) {
 
         Page<FlightResponse> flights = flightService.searchFlights(flightFilter, pageable);
         return ResponseEntity.ok(flights);
