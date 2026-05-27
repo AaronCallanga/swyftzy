@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swyftzy - My Bookings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 12h20M2 12l5-5m-5 5l5 5"/>
+            </svg>
+            <span>Swyftzy</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Find Flights</a>
+            <a href="bookings.html" class="active">My Bookings</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="page-header">
+            <h1>My Bookings</h1>
+            <div class="search-box">
+                <input type="text" id="searchRef" placeholder="Search by booking reference...">
+                <button class="btn btn-secondary" onclick="searchByReference()">Search</button>
+            </div>
+        </section>
+
+        <section class="filters">
+            <div class="filter-group">
+                <label>Filter by Flight:</label>
+                <select id="flightFilter" onchange="filterByFlight()">
+                    <option value="">All Flights</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select id="statusFilter" onchange="filterByStatus()">
+                    <option value="">All</option>
+                    <option value="CONFIRMED">Confirmed</option>
+                    <option value="CANCELLED">Cancelled</option>
+                </select>
+            </div>
+        </section>
+
+        <section id="bookingsSection">
+            <div class="section-header">
+                <h2>All Bookings</h2>
+                <span id="bookingCount" class="result-count"></span>
+            </div>
+            <div id="bookingsList" class="bookings-list"></div>
+            <div id="bookingsPagination" class="pagination"></div>
+        </section>
+
+        <div id="cancelModal" class="modal hidden">
+            <div class="modal-content">
+                <h3>Cancel Booking</h3>
+                <p>Are you sure you want to cancel booking <strong id="cancelRef"></strong>?</p>
+                <p class="warning">This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeCancelModal()">Keep Booking</button>
+                    <button class="btn btn-danger" onclick="confirmCancel()">Yes, Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast" class="toast hidden"></div>
+    </main>
+
+    <script src="bookings-app.js"></script>
+</body>
+</html>

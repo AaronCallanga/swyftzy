@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swyftzy - Flight Search</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 12h20M2 12l5-5m-5 5l5 5"/>
+            </svg>
+            <span>Swyftzy</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Find Flights</a>
+            <a href="bookings.html">My Bookings</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Search Section -->
+        <section class="search-section">
+            <h1>Where to next?</h1>
+            <div class="search-form">
+                <div class="form-group">
+                    <label>From</label>
+                    <input type="text" id="origin" placeholder="TPE" maxlength="3" value="TPE">
+                </div>
+                <div class="form-group">
+                    <label>To</label>
+                    <input type="text" id="destination" placeholder="HKG" maxlength="3">
+                </div>
+                <div class="form-group">
+                    <label>When</label>
+                    <input type="date" id="departureDate">
+                </div>
+                <button class="btn btn-primary" onclick="searchFlights()">
+                    Search Flights
+                </button>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section hidden">
+            <div class="section-header">
+                <h2>Available Flights</h2>
+                <span id="resultCount" class="result-count"></span>
+            </div>
+            <div id="flightsList" class="flights-list"></div>
+            <div id="pagination" class="pagination"></div>
+        </section>
+
+        <!-- Seat Selection Modal -->
+        <div id="seatModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Select Your Seat</h3>
+                    <button class="close-btn" onclick="closeSeatModal()">&times;</button>
+                </div>
+                <div class="flight-summary" id="flightSummary"></div>
+                
+                <div class="seat-legend">
+                    <div class="legend-item">
+                        <div class="seat-box available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="seat-box booked"></div>
+                        <span>Booked</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="seat-box selected"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+
+                <div class="cabin-tabs">
+                    <button class="tab-btn active" onclick="switchCabin('BUSINESS')">Business</button>
+                    <button class="tab-btn" onclick="switchCabin('ECONOMY')">Economy</button>
+                </div>
+
+                <div id="seatMap" class="seat-map"></div>
+
+                <div id="bookingForm" class="booking-form hidden">
+                    <h4>Passenger Details</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="passengerName" placeholder="John Smith">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="passengerEmail" placeholder="john@example.com">
+                        </div>
+                    </div>
+                    <div class="selected-seat-info">
+                        <span>Selected: <strong id="selectedSeatNumber">-</strong></span>
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="confirmBooking()">
+                        Confirm Booking
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Success Modal -->
+        <div id="successModal" class="modal hidden">
+            <div class="modal-content success-content">
+                <div class="success-icon">&#10003;</div>
+                <h3>Booking Confirmed!</h3>
+                <div id="bookingDetails" class="booking-details"></div>
+                <button class="btn btn-primary" onclick="closeSuccessModal()">Done</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
