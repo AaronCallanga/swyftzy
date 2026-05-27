@@ -4,3 +4,4 @@
         SCHEDULED → DELAYED → SCHEDULED
         SCHEDULED → CANCELLED
         BOARDING → CANCELLED (rare but possible)
+2. Use jOOQ for dynamic filtering for fetching records (e.g fetching flights filtered by origin/date/destination)
