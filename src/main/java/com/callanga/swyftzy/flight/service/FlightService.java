@@ -10,6 +10,7 @@ import com.callanga.swyftzy.flight.repository.filter.FlightFilter;
 import com.callanga.swyftzy.flight.repository.specification.FlightSpecification;
 import com.callanga.swyftzy.seat.dto.SeatAvailabilityResponse;
 import com.callanga.swyftzy.seat.service.SeatService;
+import com.callanga.swyftzy.shared.exception.FlightNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,5 +80,9 @@ public class FlightService {
                                            availability
                                    );
                                });
+    }
+
+    public Flight getFlightById(UUID id) {
+        return flightRepository.findById(id).orElseThrow(() -> new FlightNotFoundException(id));
     }
 }
