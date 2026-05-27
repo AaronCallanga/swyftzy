@@ -4,10 +4,14 @@ import com.callanga.swyftzy.seat.dto.SeatStatusCount;
 import com.callanga.swyftzy.seat.entity.Seat;
 import com.callanga.swyftzy.seat.enums.CabinClass;
 import com.callanga.swyftzy.seat.enums.SeatStatus;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -15,6 +19,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints({
+            @QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")
+    })
+    @Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.seatNumber = :seatNumber")
+    Optional<Seat> findByFlightIdAndSeatNumberWithLock(
+            @Param("flightId") UUID flightId,
+            @Param("seatNumber") String seatNumber);
 
     @Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.seatNumber = :seatNumber")
     Optional<Seat> findByFlightIdAndSeatNumber(

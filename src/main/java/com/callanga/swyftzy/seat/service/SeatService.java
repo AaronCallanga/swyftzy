@@ -8,6 +8,7 @@ import com.callanga.swyftzy.seat.enums.CabinClass;
 import com.callanga.swyftzy.seat.enums.SeatStatus;
 import com.callanga.swyftzy.seat.mapper.SeatMapper;
 import com.callanga.swyftzy.seat.repository.SeatRepository;
+import com.callanga.swyftzy.shared.exception.SeatNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,15 +85,15 @@ public class SeatService {
     }
 
     /**
-     * Finds details of a specific seat
+     * Finds details of a specific seat with pessimistic lock
      *
      * @param flightId   the flight UUID
      * @param seatNumber the seatNumber identifier
      * @return an Optional containing the flight response if found
      */
-    public Optional<SeatResponse> findById(UUID flightId,
-                                           String seatNumber) {
+    public Seat getSeatByFlightIdAndSeatNumberWithLock(UUID flightId,
+                                                       String seatNumber) {
         return seatRepository.findByFlightIdAndSeatNumber(flightId, seatNumber)
-                             .map(seatMapper::toResponse);
+                             .orElseThrow(() -> new SeatNotFoundException(seatNumber));
     }
 }
