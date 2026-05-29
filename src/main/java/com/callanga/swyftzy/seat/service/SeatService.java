@@ -93,7 +93,7 @@ public class SeatService {
      */
     public Seat getSeatByFlightIdAndSeatNumberWithLock(UUID flightId,
                                                        String seatNumber) {
-        return seatRepository.findByFlightIdAndSeatNumber(flightId, seatNumber)
+        return seatRepository.findByFlightIdAndSeatNumberWithLock(flightId, seatNumber)
                              .orElseThrow(() -> new SeatNotFoundException(seatNumber));
     }
 }
