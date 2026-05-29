@@ -3,6 +3,7 @@ package com.callanga.swyftzy.seat.repository;
 import com.callanga.swyftzy.seat.dto.SeatStatusCount;
 import com.callanga.swyftzy.seat.entity.Seat;
 import com.callanga.swyftzy.seat.enums.CabinClass;
+import com.callanga.swyftzy.seat.enums.SeatLocation;
 import com.callanga.swyftzy.seat.enums.SeatStatus;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface SeatRepository extends JpaRepository<Seat, Long> {
+public interface SeatRepository extends JpaRepository<Seat, UUID> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @QueryHints({
@@ -40,12 +41,14 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
                 WHERE s.flight.id = :flightId
                   AND (:cabin IS NULL OR s.cabin = :cabin)
                   AND (:status IS NULL OR s.status = :status)
+                  AND (:location IS NULL OR s.location = :location)
                 ORDER BY s.seatNumber
             """)
     Page<Seat> findSeats(
             @Param("flightId") UUID flightId,
             @Param("cabin") CabinClass cabin,
             @Param("status") SeatStatus status,
+            @Param("location") SeatLocation location,
             Pageable pageable
                         );
 

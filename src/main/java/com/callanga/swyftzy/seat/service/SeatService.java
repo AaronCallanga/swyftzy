@@ -5,6 +5,7 @@ import com.callanga.swyftzy.seat.dto.SeatResponse;
 import com.callanga.swyftzy.seat.dto.SeatStatusCount;
 import com.callanga.swyftzy.seat.entity.Seat;
 import com.callanga.swyftzy.seat.enums.CabinClass;
+import com.callanga.swyftzy.seat.enums.SeatLocation;
 import com.callanga.swyftzy.seat.enums.SeatStatus;
 import com.callanga.swyftzy.seat.mapper.SeatMapper;
 import com.callanga.swyftzy.seat.repository.SeatRepository;
@@ -41,9 +42,10 @@ public class SeatService {
     public Page<SeatResponse> listSeats(UUID flightId,
                                         CabinClass cabin,
                                         SeatStatus status,
+                                        SeatLocation location,
                                         Pageable pageable) {
         return seatRepository
-                .findSeats(flightId, cabin, status, pageable)
+                .findSeats(flightId, cabin, status, location, pageable)
                 .map(seatMapper::toResponse);
     }
 

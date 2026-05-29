@@ -3,6 +3,7 @@ package com.callanga.swyftzy.seat.controller;
 import com.callanga.swyftzy.seat.dto.SeatAvailabilityResponse;
 import com.callanga.swyftzy.seat.dto.SeatResponse;
 import com.callanga.swyftzy.seat.enums.CabinClass;
+import com.callanga.swyftzy.seat.enums.SeatLocation;
 import com.callanga.swyftzy.seat.enums.SeatStatus;
 import com.callanga.swyftzy.seat.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,15 +32,16 @@ public class SeatController {
     @GetMapping
     @Operation(
             summary = "List seats for a flight",
-            description = "List seats with optional cabin and status filters."
+            description = "List seats with optional cabin, status, and location filters. Supports multi-value location filtering."
     )
     public ResponseEntity<Page<SeatResponse>> listSeats(
             @PathVariable UUID flightId,
             @RequestParam(required = false) CabinClass cabin,
             @RequestParam(required = false) SeatStatus status,
+            @RequestParam(required = false) SeatLocation location,
             @PageableDefault(size = 20, sort = "seatNumber") Pageable pageable
                                                        ) {
-        return ResponseEntity.ok(seatService.listSeats(flightId, cabin, status, pageable));
+        return ResponseEntity.ok(seatService.listSeats(flightId, cabin, status, location, pageable));
     }
 
     @GetMapping("/availability")
