@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.PessimisticLockingFailureException;
+import org.springframework.dao.QueryTimeoutException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -83,6 +85,26 @@ public class GlobalExceptionHandler {
         return buildProblemDetail(
                 HttpStatus.CONFLICT, "Concurrent Booking Conflict",
                 "Unable to acquire seat lock. The seat may be in high demand. Please try again.",
+                "/concurrent-booking-conflict", request
+                                 );
+    }
+
+    @ExceptionHandler(QueryTimeoutException.class)
+    public ProblemDetail handleQueryTimeout(QueryTimeoutException ex, HttpServletRequest request) {
+        log.warn("Query timeout during concurrent booking attempt: {}", ex.getMessage());
+        return buildProblemDetail(
+                HttpStatus.CONFLICT, "Concurrent Booking Conflict",
+                "Unable to acquire seat lock. The seat may be in high demand. Please try again.",
+                "/concurrent-booking-conflict", request
+                                 );
+    }
+
+    @ExceptionHandler(TransactionSystemException.class)
+    public ProblemDetail handleTransactionSystemException(TransactionSystemException ex, HttpServletRequest request) {
+        log.warn("Transaction failure during concurrent booking attempt: {}", ex.getMessage());
+        return buildProblemDetail(
+                HttpStatus.CONFLICT, "Concurrent Booking Conflict",
+                "Unable to complete booking. The seat may be in high demand. Please try again.",
                 "/concurrent-booking-conflict", request
                                  );
     }
