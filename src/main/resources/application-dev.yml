@@ -3,6 +3,13 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5433/swyftzy}
     username: ${DB_USERNAME:swyftzy}
     password: ${DB_PASSWORD:swyftzy}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      pool-name: SwyftzyHikariPool
   jpa:
     hibernate:
       ddl-auto: ${DDL_AUTO:validate}
@@ -13,4 +20,13 @@ spring:
 
 server:
   port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+  endpoint:
+    health:
+      show-details: always
 
